@@ -33,12 +33,12 @@ class Propagator:
         self.grat2samp_in_m = self.grat2det_in_m - prop_in_m - \
                               (samp.t_samp_in_mm * 1e-3) / 2
         self.samp2det_in_m = prop_in_m - (samp.t_samp_in_mm * 1e-3) / 2
+        self.bin_grat = grat.create_grating()
 
     # --- Basic operations ----------------------------------------------------
 
     def inter_wavefld_grat(self, 
-                           wavefld: np.ndarray,
-                           bin_grat: np.ndarray) -> np.ndarray:
+                           wavefld: np.ndarray) -> np.ndarray:
         """
         Applies the grating interaction to the wave field.
 
@@ -55,7 +55,7 @@ class Propagator:
                         grating.
         """
 
-        return wavefld * bin_grat  
+        return wavefld * self.bin_grat  
 
     def inter_wavefld_samp(self, 
                            wavefld: np.ndarray, 
