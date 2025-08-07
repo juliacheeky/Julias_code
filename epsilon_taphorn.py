@@ -6,6 +6,8 @@ from parameters import *
 from detector import *
 from plotting import *
 import matplotlib.pyplot as plt
+import csv
+import pandas as pd
 
 samp2d = Sample(t_samp_in_mm = t_samp_in_mm,
                 d_sph_in_um = d_sph_in_um,
@@ -122,21 +124,34 @@ pre_20keV = 3*np.pi**2/(l_in_m_list[1]**2)*f_sph* np.abs(delta_n)**2*corr_length
 pre_10keV = 3*np.pi**2/(l_in_m_list[0]**2)*f_sph* np.abs(delta_n)**2*corr_lengths[0]
 pre_30keV = 3*np.pi**2/(l_in_m_list[2]**2)*f_sph* np.abs(delta_n)**2*corr_lengths[2]
 pre_40keV = 3*np.pi**2/(l_in_m_list[3]**2)*f_sph* np.abs(delta_n)**2*corr_lengths[3]
-df_20keV = pd.read_csv('visibility_results_20keV.csv')  # Replace with the actual path if needed
-df_10keV = pd.read_csv('visibility_results_10keV.csv')
-df_30keV = pd.read_csv('visibility_results_30keV.csv')
-df_40keV = pd.read_csv('visibility_results_40keV.csv')
-"""
+df_20keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_20keV.csv')  # Replace with the actual path if needed
+df_10keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_10keV.csv')
+df_30keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_30keV.csv')
+df_40keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_40keV.csv')
+df_lowres_30keV = pd.read_csv('visibility_results_30keV_lowres.csv')
+df_highres_30keV = pd.read_csv('visibility_results_30keV_highres.csv')
+df_10keV_fixed = pd.read_csv('double_corrected_visibility_results_10keV.csv')
+df_10keV_noabsorb= pd.read_csv('corrected_visibility_results_10keV.csv')
+df_30keV_fixed = pd.read_csv('double_corrected_visibility_results_30keV.csv')
+df = pd.read_csv("scaled_up_epsilons.csv")
+prefactors = df["prefactor"]
+
+
 # Plot
 plt.figure(figsize=(8, 8))
-#plt.plot(df_20keV['Sphere size (um)'], df_20keV['Epsilon']/pre_20keV, marker='o', linestyle='-', label = 'E = 20 keV simulated', color = 'red')
-#plt.plot(D*1e6, mu_d_all[1,:], label='E = 20 keV analytical', color='red')
-plt.plot(df_10keV['Sphere size (um)'], df_10keV['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated', color = 'green')
-plt.plot(df_20keV['Sphere size (um)'], df_20keV['Epsilon'], marker='o', linestyle='-', label = 'E = 20 keV simulated', color = 'red')
-plt.plot(df_30keV['Sphere size (um)'], df_30keV['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'blue')
-plt.plot(df_40keV['Sphere size (um)'], df_40keV['Epsilon'], marker='o', linestyle='-', label = 'E = 40 keV simulated', color = 'orange')
+#plt.plot(D*1e6, mu_d_all[0,:]*prefactors[0], label='E = 10 keV analytical', color='green')
+#plt.plot(df_10keV['Sphere size (um)'], df_10keV['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated', color = 'green')
+#plt.plot(df_10keV_fixed['Sphere size (um)'], df_10keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated', color = 'green')
+#plt.plot(df_10keV_noabsorb['Sphere size (um)'], df_10keV_noabsorb['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated half fix', color = 'red')
+#plt.plot(D*1e6, mu_d_all[1,:]*prefactors[1], label='E = 20 keV analytical', color='red')
+#plt.plot(df_20keV['Sphere size (um)'], df_20keV['Epsilon'], marker='o', linestyle='-', label = 'E = 20 keV simulated', color = 'red')
+plt.plot(D*1e6, mu_d_all[2,:]*prefactors[2], label='E = 30 keV analytical', color = 'blue')
+plt.plot(df_30keV_fixed['Sphere size (um)'], df_30keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'red')
+#plt.plot(df_highres_30keV['Sphere size (um)'], df_highres_30keV['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated high res', color = 'blue')
+#plt.plot(df_30keV['Sphere size (um)'], df_30keV['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'red')
+#plt.plot(D*1e6, mu_d_all[3,:]*prefactors[3], label='E = 40 keV analytical', color = 'orange')
+#plt.plot(df_40keV['Sphere size (um)'], df_40keV['Epsilon'], marker='o', linestyle='-', label = 'E = 40 keV simulated', color = 'orange')
 
-#plt.plot(D*1e6, mu_d_all[3,:], label='E = 40 keV analytical', color = 'orange')
 # Labels and title
 plt.xlabel('Sphere Size (μm)')
 plt.ylabel('Epsilon')
@@ -146,7 +161,7 @@ plt.xlim(2, 30)
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
-plt.savefig("epsilon_diam_no_pre_compare.pdf", dpi=300, bbox_inches='tight')
+plt.savefig("test3_epsilon_diam_analyt.pdf", dpi=300, bbox_inches='tight')
 """
 zeta10 = corr_lengths[0]/(D/2)
 zeta20 = corr_lengths[1]/(D/2)
@@ -156,13 +171,13 @@ def G(zeta):
     return term1 + term2
 
 def xray_sld(total_electrons, molar_mass, density):
-    """
+
     Calculate X-ray Scattering Length Density (SLD) in Å⁻²
     Inputs:
         total_electrons: total Z per molecule
         molar_mass: in g/mol
         density: in g/cm³
-    """
+
     N_A = 6.022e23            # mol⁻¹
     V_mol = (molar_mass / density) / N_A 
     return (r_e * total_electrons) / V_mol
@@ -178,6 +193,5 @@ plt.plot(D*1e6,sigmas*(1-G(zeta10)), color = 'red')
 plt.plot(D*1e6,sigmas*(1-G(zeta20)), color = 'red')
 #plt.plot(D*1e6, mu_d_all[0,:], label='E = 10 keV analytical', color='green')
 plt.savefig("test_test.pdf", dpi=300, bbox_inches='tight')
-
-
+"""
 
