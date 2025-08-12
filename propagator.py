@@ -57,31 +57,6 @@ class Propagator:
 
         return wavefld * self.bin_grat  
 
-    def inter_wavefld_samp(self, 
-                           wavefld: np.ndarray, 
-                           samp_sph_in_m: np.ndarray,
-                           samp_bkg_in_m: np.ndarray) -> np.ndarray:
-        """
-        Applies the sample interaction to the wave field.
-
-        This method modifies the input wave field based on the phase shifts 
-        and attenuation resulting from the sample properties.
-
-        Args:
-            wavefld (np.ndarray): The input wave field to be modified.
-            samp_sph_in_m (np.ndarray): _description_
-            samp_bkg_in_m (np.ndarray): _description_
-
-        Returns:
-            np.ndarray: The modified wave field after interaction with the 
-                        sample.
-        """
-        return wavefld * np.exp(-1j * k_in_1_m * (self.samp.delta_sph * \
-                                samp_sph_in_m + self.samp.delta_bkg * \
-                                samp_bkg_in_m)) * \
-               np.exp(-((self.samp.mu_sph_in_1_m / 2) * samp_sph_in_m + \
-                      (self.samp.mu_bkg_in_1_m / 2) * samp_bkg_in_m)) 
-        
     def create_Fresnel_kernel(self, z_in_m: float) -> np.ndarray:
         """
         Creates a Fresnel propagation kernel in the Fourier domain to simulate 
@@ -148,7 +123,7 @@ class Propagator:
                                                     sim_pix_size_in_m)
 
         # Interaction of the initial wave field with the binary grating
-        wavefld_ag = self.inter_wavefld_grat(wavefld, bin_grat)
+        wavefld_ag = self.inter_wavefld_grat(wavefld)
 
         # --- Obtain Iref -----------------------------------------------------
 
@@ -172,18 +147,16 @@ class Propagator:
         data = np.load(slice_profiles_path)
         slc2d_sph_full = data['slc2d_sph_padded']
         slc2d_bkg_full = data['slc2d_bkg_padded']   
-
+        sample_compressed = self.samp.samp_with_refract_property(slc2d_sph_full* sim_pix_size_in_m,
+                           slc2d_bkg_full * sim_pix_size_in_m)
         for i in tqdm(range(self.samp.num_slc)):
         #for i in tqdm(range(1000)):            
             # Creation of the sample slice
 
-            slc1d_sph = slc2d_sph_full[i, :]
-            slc1d_bkg = slc2d_bkg_full[i, :]
             # Interaction between the wave field before the slice and the sample
             # slice
-            wavefld_as = self.inter_wavefld_samp(wavefld_bs, 
-                                                 slc1d_sph * sim_pix_size_in_m,
-                                                 slc1d_bkg * sim_pix_size_in_m)
+            wavefld_as = wavefld_bs * sample_compressed[i, :]
+
             # Propagation of the wave field after the sample slice until the 
             # next sample slice
             wavefld_prop = self.prop_wavefld(wavefld_as, kernel_slc2slc)

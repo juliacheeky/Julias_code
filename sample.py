@@ -116,11 +116,11 @@ class Sample:
     
     # --- Spheres -------------------------------------------------------------
 
-
+    """
     def draw_sph_centers_2d(self, 
                             seed: int) -> Tuple[np.ndarray, 
                                                 np.ndarray]:
-        """
+       
         Generates random centers for spheres within a specified sampling area.
 
         This method uses a fixed random seed for reproducibility and generates 
@@ -136,7 +136,7 @@ class Sample:
                                            and X-coordinates of the sphere 
                                            centers, respectively.
                                            
-        """
+      
 
         np.random.seed(seed)
         cZ = np.random.randint(1 * self.r_sph_in_pix, 
@@ -147,8 +147,24 @@ class Sample:
                                 self.r_sph_in_pix), self.num_sph_2dslice)
 
         return cZ, cX
-
+        """
     # --- Sample 2D -----------------------------------------------------------
+
+    def centres_min_overlap(num_circles: int, radius: int, maxX: int, maxY: int, seed: int):
+        np.random.seed(seed) # set seed to allow reproducability
+
+        # get twice as many a needed, so we can pick the furthest apart
+        centres = np.random.randint(radius, [maxX-radius, maxY-radius], (num_circles*2, 2))
+        # calculate distances^2 between all pairs of points
+        distances = np.sum(np.square(centres.reshape((-1, 1, 2)) - centres), -1)
+        # ignore values in lower half by setting them to max possible
+        distances[np.arange(distances.shape[0])[:,None] >= np.arange(distances.shape[1])] = maxX*maxY
+        # get the minumim distance to previous points
+        min_distances = np.nanmin(distances, 0)
+        # sort indices by descreasing distance, get best half
+        indices = np.argsort(-min_distances)[0:num_circles]
+        return centres.take(indices, 0)
+
 
     def create_slice2d(self, 
                        seed: int) -> Tuple[np.ndarray, 
@@ -174,7 +190,7 @@ class Sample:
 
         # Create the 2D slice that will contain the projected spheres
         slc2d_sph = np.zeros((samp_size_in_pix,self.t_samp_in_pix), dtype=np.uint16) 
-
+        
         cZ, cX = self.draw_sph_centers_2d(seed)
         for x,z in zip(cX, cZ):
             rr, cc = disk((x,z),self.r_sph_in_pix, shape=(samp_size_in_pix,self.t_samp_in_pix))# Create a 2D sphere with the center at (cX, cZ)
@@ -212,6 +228,30 @@ class Sample:
         slc2d_sph_padded[:, x_offset:x_offset + samp_size_in_pix] = slice_profiles_sph
         slc2d_bkg_padded[:, x_offset:x_offset + samp_size_in_pix] = slice_profiles_bkg
         return slc2d_sph_padded, slc2d_bkg_padded
+
+    def samp_with_refract_property(self, 
+                           samp_sph_in_m: np.ndarray,
+                           samp_bkg_in_m: np.ndarray) -> np.ndarray:
+        """
+        Applies the refractive properties of the sample to the binary array.
+
+        This method modifies the input wave field based on the phase shifts 
+        and attenuation resulting from the sample properties.
+
+        Args:
+            samp_sph_in_m (np.ndarray): _description_
+            samp_bkg_in_m (np.ndarray): _description_
+
+        Returns:
+            np.ndarray: The modified wave field after interaction with the 
+                        sample.
+        """
+        return np.exp(-1j * k_in_1_m * (self.delta_sph * \
+                                samp_sph_in_m + self.delta_bkg * \
+                                samp_bkg_in_m)) * \
+               np.exp(-((self.mu_sph_in_1_m / 2) * samp_sph_in_m + \
+                      (self.mu_bkg_in_1_m / 2) * samp_bkg_in_m)) 
+
 """
 samp2d = Sample(t_samp_in_mm = t_samp_in_mm,
                 d_sph_in_um = d_sph_in_um,

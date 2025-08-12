@@ -62,14 +62,13 @@ def plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True):
     plt.plot(Isamp_stepped, label='Isamp with G2', linewidth=0.5, color='blue')
     plt.title(f"Intensity Profile at {E_in_keV:.1f} keV | Visibility with sample: {visibility_sample.real:.3f} \n Thickness of sample: {t_samp_in_mm:.1f} mm | Mean Intensity: {np.mean(Isamp_stepped.real):.3f}")
     #plt.title(f"Intensity Profile at {E_in_keV:.1f} keV no G2 \n Thickness of sample: {t_samp_in_mm:.1f} mm | Mean Intensity: {np.mean(Isamp_stepped.real):.3f}")
-    plt.xlim(15000, 20000)
     plt.xlabel('Pixels')
     plt.ylabel('Intensity')
     plt.legend()
 
     if save_plot:
         #path_image = os.path.join("images", "bone_like_1" ,f"intensity_withG2_with_absorb_2mat_{name_mat_sph}_{name_mat_bkg}_{E_in_keV:.1f}keV_{t_samp_in_mm:.1f}mm.pdf")
-        path_image = os.path.join("closer_look.pdf")
+        path_image = os.path.join("closer_look_test.pdf")
         plt.savefig(path_image, dpi=600, bbox_inches='tight')
     del Iref_stepped, Isamp_stepped
 
@@ -89,7 +88,6 @@ def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat):
     visibility_s = a_1s.real/a_0s
     visibility_r = a_1r.real/a_0r
     visibility = visibility_s/visibility_r
-    #visibility = (I_max - I_min) / (I_max + I_min)
     epsilon = -np.log(visibility) / (t_samp_in_mm * 1e-3)
     print(f"Mean with sample: {np.mean(Isamp_stepped.real):.3f} at Energy: {E_in_keV:.1f} keV")
     return visibility, epsilon

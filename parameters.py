@@ -33,7 +33,7 @@ prop_in_m = 0.175
 # --- Source ------------------------------------------------------------------
 
 # Energy in keV
-E_in_keV = 10
+E_in_keV = 20
 # Number of photons per pixel
 num_ph = 1e5
 # Wavelength in m 
@@ -47,8 +47,8 @@ r_e = cte.physical_constants["classical electron radius"][0]  # in m
 # --- Sample ------------------------------------------------------------------
 
 sim_approx = "slice" #"slice"
-t_samp_in_mm = 1
-d_sph_in_um = 10
+t_samp_in_mm = 0.5
+d_sph_in_um = 0.8
 f_sph = 0.01
 mat_sph_type = "compound"
 mat_bkg_type = "compound"
@@ -58,10 +58,10 @@ name_mat_sph = "glass"
 mat_bkg = "C2H6O"
 name_mat_bkg = "ethanol"
 #mat_bkg ="H0.39234C0.15008N0.03487O0.31620Na0.00051Mg0.00096P0.03867S0.00109Ca0.06529" #bone
-#rho_sph_in_g_cm3 = 2.196 # Density SiO2
-rho_sph_in_g_cm3 = 0.001225 # Density air
-#rho_bkg_in_g_cm3 = 0.78945 #Density C2H6O
-rho_bkg_in_g_cm3 = 1.85 # Density bone
+rho_sph_in_g_cm3 = 2.196 # Density SiO2
+#rho_sph_in_g_cm3 = 0.001225 # Density air
+rho_bkg_in_g_cm3 = 0.78945 #Density C2H6O
+#rho_bkg_in_g_cm3 = 1.85 # Density bone
 # Thickness of a sample slice, in pix. 
 # Note: - For the projection approximation, t_slc = t_samp.
 #       - For the thin slice approximation, t_slc = 1.4 um (diameter of the 
