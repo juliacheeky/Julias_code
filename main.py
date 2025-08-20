@@ -10,7 +10,7 @@ import threading
 import os
 import csv
 import matplotlib.pyplot as plt
-"""
+
 samp2d = Sample(t_samp_in_mm = t_samp_in_mm,
                 d_sph_in_um = d_sph_in_um,
                 f_sph = f_sph,
@@ -20,11 +20,12 @@ samp2d = Sample(t_samp_in_mm = t_samp_in_mm,
                 mat_bkg = mat_bkg,
                 rho_sph_in_g_cm3 = rho_sph_in_g_cm3, 
                 rho_bkg_in_g_cm3 = rho_bkg_in_g_cm3) 
-"""
+
 grat1d = Grating(px_in_um = px_in_um)
 """
 prop = Propagator(grat = grat1d,
-                        samp = samp2d)
+                        samp = samp2d,
+                        prop_in_m = prop_in_m)
 """
 det = Detector(px_in_um= px_in_um)
 
@@ -45,7 +46,7 @@ timer_thread = threading.Thread(target=print_elapsed_time, args=(start, stop_eve
 timer_thread.start()
 
 try:
-    """
+
     if os.path.exists(slice_profiles_path):
         # Load from file
         data = np.load(slice_profiles_path)
@@ -59,36 +60,59 @@ try:
         np.savez(slice_profiles_path, slc2d_sph_padded=slc2d_sph_padded, slc2d_bkg_padded=slc2d_bkg_padded)
         print()
         print("Created and saved slice profiles.")
-    plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True)
-    #Always create new sample
-    """
-    results = []
-    sphere_sizes_in_um = np.arange(2, 31)
-    for sphere_size in sphere_sizes_in_um:
-        samp2d = Sample(t_samp_in_mm = t_samp_in_mm,
-                    d_sph_in_um = sphere_size,
-                    f_sph = f_sph,
-                    mat_sph_type = mat_sph_type,
-                    mat_bkg_type = mat_bkg_type,
-                    mat_sph = mat_sph, 
-                    mat_bkg = mat_bkg,
-                    rho_sph_in_g_cm3 = rho_sph_in_g_cm3, 
-                    rho_bkg_in_g_cm3 = rho_bkg_in_g_cm3) 
-        prop = Propagator(grat = grat1d,
-                    samp = samp2d)
-        slc2d_sph_padded, slc2d_bkg_padded = samp2d.create_projected_1d_slices(seed=0)
-        np.savez(slice_profiles_path, slc2d_sph_padded=slc2d_sph_padded, slc2d_bkg_padded=slc2d_bkg_padded)
-        visibility, epsilon = save_visibility_epsilon(det, prop,  wavefld_bg, prop.bin_grat)
-        print(f"Visibility with sample: {visibility.real:.3f} at Energy: {E_in_keV:.1f} keV at diameter: {sphere_size:.2f}")
-        particle_fraction = np.sum(slc2d_sph_padded)/(samp_size_in_pix*t_samp_in_mm * 1e-3/sim_pix_size_in_m)
-        results.append([sphere_size, visibility.real, epsilon.real, particle_fraction])
-        os.remove(slice_profiles_path)
-        print(particle_fraction, "real particle fraction")
-        del slc2d_sph_padded, slc2d_bkg_padded
+    #plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True)
 
-        with open("visibility_results_20keV_0.5mm.csv", "w", newline="") as f:
+    def epsilon_vs_diameter(samp2d):
+
+        results = []
+        sphere_sizes_in_um = np.arange(2, 31)
+        for sphere_size in sphere_sizes_in_um:
+            samp2d = Sample(t_samp_in_mm = t_samp_in_mm,
+                        d_sph_in_um = sphere_size,
+                        f_sph = f_sph,
+                        mat_sph_type = mat_sph_type,
+                        mat_bkg_type = mat_bkg_type,
+                        mat_sph = mat_sph, 
+                        mat_bkg = mat_bkg,
+                        rho_sph_in_g_cm3 = rho_sph_in_g_cm3, 
+                        rho_bkg_in_g_cm3 = rho_bkg_in_g_cm3) 
+            prop = Propagator(grat = grat1d,
+                        samp = samp2d)
+            slc2d_sph_padded, slc2d_bkg_padded = samp2d.create_projected_1d_slices(seed=0)
+            np.savez(slice_profiles_path, slc2d_sph_padded=slc2d_sph_padded, slc2d_bkg_padded=slc2d_bkg_padded)
+            visibility, epsilon = save_visibility_epsilon(det, prop,  wavefld_bg, prop.bin_grat)
+            print(f"Visibility with sample: {visibility.real:.3f} at Energy: {E_in_keV:.1f} keV at diameter: {sphere_size:.2f}")
+            particle_fraction = np.sum(slc2d_sph_padded)/(samp_size_in_pix*t_samp_in_mm * 1e-3/sim_pix_size_in_m)
+            results.append([sphere_size, visibility.real, epsilon.real, particle_fraction, samp2d.num_sph_2dslice ])
+            os.remove(slice_profiles_path)
+            print(particle_fraction, "real particle fraction")
+            del slc2d_sph_padded, slc2d_bkg_padded
+
+            with open("visibility_results_20keV_64periods.csv", "w", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(["Sphere size (um)", "Visibility", "Epsilon", "Particle fraction", "Number of spheres"])
+                writer.writerows(results)
+
+    results = []
+    distances_samp_det = np.arange(0.01, 0.39, 0.02)   # in m
+    distances = np.arange(0, 0.91, 0.02)
+    for distance in distances_samp_det:
+
+        prop = Propagator(grat = grat1d,
+                    samp = samp2d,
+                    prop_in_m = distance)
+        visibility, epsilon = save_visibility_epsilon(det, prop,  wavefld_bg, prop.bin_grat)
+        corr_length = (l_in_m*distance)/(px_in_um * 1e-6) 
+        print(f"Visibility with sample: {visibility.real:.3f} at Energy: {E_in_keV:.1f} keV distance to detector: {distance*1e2:.2f} cm")
+        print(f"Correlation length: {corr_length:.2f} pixels")
+        particle_fraction = np.sum(slc2d_sph_padded)/(samp_size_in_pix*t_samp_in_mm * 1e-3/sim_pix_size_in_m)
+        results.append([distance, corr_length, visibility.real, epsilon.real, samp2d.num_sph_2dslice])
+        print(particle_fraction, "real particle fraction")
+        #plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True)
+
+        with open("visibility_results_20keV_corr_lengths_20um.csv", "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(["Sphere size (um)", "Visibility", "Epsilon", "Particle fraction"])
+            writer.writerow(["Propagation distance","Correlation length", "Visibility", "Epsilon", "Number of spheres"])
             writer.writerows(results)
 
 

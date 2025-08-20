@@ -47,9 +47,9 @@ r_e = cte.physical_constants["classical electron radius"][0]  # in m
 # --- Sample ------------------------------------------------------------------
 
 sim_approx = "slice" #"slice"
-t_samp_in_mm = 0.5
-d_sph_in_um = 0.8
-f_sph = 0.01
+t_samp_in_mm = 1
+d_sph_in_um = 20
+f_sph = 0.05
 mat_sph_type = "compound"
 mat_bkg_type = "compound"
 mat_sph = "SiO2" 
@@ -61,6 +61,7 @@ name_mat_bkg = "ethanol"
 rho_sph_in_g_cm3 = 2.196 # Density SiO2
 #rho_sph_in_g_cm3 = 0.001225 # Density air
 rho_bkg_in_g_cm3 = 0.78945 #Density C2H6O
+#rho_bkg_in_g_cm3 = 0.998 #Density water
 #rho_bkg_in_g_cm3 = 1.85 # Density bone
 # Thickness of a sample slice, in pix. 
 # Note: - For the projection approximation, t_slc = t_samp.

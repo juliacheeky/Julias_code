@@ -8,6 +8,7 @@ from plotting import *
 import matplotlib.pyplot as plt
 import csv
 import pandas as pd
+import os
 
 samp2d = Sample(t_samp_in_mm = t_samp_in_mm,
                 d_sph_in_um = d_sph_in_um,
@@ -19,36 +20,12 @@ samp2d = Sample(t_samp_in_mm = t_samp_in_mm,
                 rho_sph_in_g_cm3 = rho_sph_in_g_cm3, 
                 rho_bkg_in_g_cm3 = rho_bkg_in_g_cm3) 
 
-""" Something coppied and Adapted from taphorn 
-plank_const = 6.62607*1e-34
-light_v = 299792458
-ev_to_j = 1.602176*1e-19
-period_g2 = 7e-6
-radius = 4e-4
-energies = np.linspace(30,80,11)
-ls = 0.175
-
-lambdaas = plank_const*light_v /(energies*1000* ev_to_j)  # in m
-corr_lengths = (ls *lambdaas)/(period_g2*1e-3)   # g2_pitch also in m so that corr lenghts is in m here
-#corr_lengths *=1e6  # in um
-sphere_size = radius 
-
-G1 = np.exp(-9/8.* (corr_lengths/sphere_size )**2  )  # fritz phd thesis
-
-dim_xi = corr_lengths/sphere_size
-
-G2 = (1- (dim_xi/2)**2)**0.5 * (1 + 1/8. *dim_xi**2) + 0.5 * dim_xi**2 * (1 - (dim_xi/4)**2  ) * np.log( dim_xi / (2 + (4-dim_xi**2)**0.5))  # strobl paper
-print(G2)
-theo_df_signal2 = -0.5 * 50.**2/energies**2 * (G2   -1.) #wo kommt die 50 und die 0.5 her?
-
-scatter = 3/2 * radius
-"""
 
 delta_delta = samp2d.rho_bkg_in_g_cm3 - samp2d.rho_sph_in_g_cm3
 delta_mu = samp2d.mu_bkg_in_1_m - samp2d.mu_sph_in_1_m
-delta_chi = - delta_delta - 1j * l_in_m * delta_mu / (2 * np.pi)
-
 corr_length = (l_in_m*prop_in_m)/(px_in_um * 1e-6) 
+
+
 def mu_d(lambda_, f, delta_chi, d, D):
 
     D_prime = D / d
@@ -63,16 +40,6 @@ def mu_d(lambda_, f, delta_chi, d, D):
     return prefactor * shape_factor
 
 #mu_d = mu_d(l_in_m, f_sph, delta_chi, corr_length, 10e-6)
-
-
-def mu_d_normalisiert_alt(D_prime):
-
-    if D_prime > 1:
-        sqrt_term = np.sqrt(D_prime**2 - 1)
-        shape_factor = (D_prime - sqrt_term * (1 + 1 / (2 * D_prime**2))+ (1 / D_prime - 1 / (4 * D_prime**3))) * np.log((D_prime + sqrt_term) / (D_prime - sqrt_term))
-    if D_prime <= 1.:
-        shape_factor = D_prime
-    return shape_factor
 
 
 def mu_d_normalisiert(D_prime):
@@ -119,82 +86,160 @@ plt.savefig('shape_factor_epsilon_cropped.pdf')
 n_bkg = 1 - samp2d.delta_bkg + 1j * samp2d.mu_bkg_in_1_m/(2*k_in_1_m)
 n_sph = 1 - samp2d.delta_sph + 1j * samp2d.mu_sph_in_1_m/(2*k_in_1_m)
 delta_n = (n_bkg - n_sph)
+pre = 3*np.pi**2/(l_in_m**2)*f_sph* np.abs(delta_n)**2*corr_length
 
-pre_20keV = 3*np.pi**2/(l_in_m_list[1]**2)*f_sph* np.abs(delta_n)**2*corr_lengths[1]
-pre_10keV = 3*np.pi**2/(l_in_m_list[0]**2)*f_sph* np.abs(delta_n)**2*corr_lengths[0]
-pre_30keV = 3*np.pi**2/(l_in_m_list[2]**2)*f_sph* np.abs(delta_n)**2*corr_lengths[2]
-pre_40keV = 3*np.pi**2/(l_in_m_list[3]**2)*f_sph* np.abs(delta_n)**2*corr_lengths[3]
-df_20keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_20keV.csv')  # Replace with the actual path if needed
-df_10keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_10keV.csv')
-df_30keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_30keV.csv')
-df_40keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_40keV.csv')
-df_lowres_30keV = pd.read_csv('visibility_results_30keV_lowres.csv')
-df_highres_30keV = pd.read_csv('visibility_results_30keV_highres.csv')
-df_10keV_fixed = pd.read_csv('double_corrected_visibility_results_10keV.csv')
-df_10keV_noabsorb= pd.read_csv('corrected_visibility_results_10keV.csv')
-df_30keV_fixed = pd.read_csv('double_corrected_visibility_results_30keV.csv')
-df_20keV_fixed = pd.read_csv('double_corrected_visibility_results_20keV.csv')
-df_40keV_fixed = pd.read_csv('double_corrected_visibility_results_40keV.csv')
-df = pd.read_csv("scaled_up_epsilons.csv")
+
+
+df_lowres_30keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_30keV_lowres.csv')
+df_highres_30keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_30keV_highres.csv')
+#df_10keV_fixed = pd.read_csv('dark_field_SiO2_Ethanol_diameter/double_corrected_visibility_results_10keV.csv')
+df_10keV_fixed = pd.read_csv("visibility_results_10keV_v2.csv")
+df_20keV_fixed = pd.read_csv("visibility_results_20keV_v2.csv")
+df_10keV_noabsorb= pd.read_csv('dark_field_SiO2_Ethanol_diameter/corrected_visibility_results_10keV.csv')
+df_30keV_fixed = pd.read_csv('dark_field_SiO2_Ethanol_diameter/double_corrected_visibility_results_30keV.csv')
+df_40keV_fixed = pd.read_csv('dark_field_SiO2_Ethanol_diameter/double_corrected_visibility_results_40keV.csv')
+df_10keV_thin_slices = pd.read_csv('visibility_results_10keV_1mm_slc=0.7um.csv')
+df_10keV_thick_slices = pd.read_csv('visibility_results_10keV_1mm_slc=2.8um.csv')
+df_10keV_chunky_slices = pd.read_csv('visibility_results_10keV_1mm_slc=15um.csv')
+
+df_20keV_01 = pd.read_csv('visibility_results_20keV_1mm_f=0.1.csv')
+df_20keV_005 = pd.read_csv('visibility_results_20keV_1mm_f=0.05.csv')
+
+df_20keV_05mm = pd.read_csv('visibility_results_20keV_0.5mm_v2.csv')
+df_20keV_2mm = pd.read_csv('visibility_results_20keV_2mm_f=0.01.csv')
+
+# Data for correlation plots
+df_20keV_corrlength = pd.read_csv('visibility_results_20keV_corr_lengths.csv')
+df_20keV_corrlength_v2 = pd.read_csv('visibility_results_20keV_corr_lengths_v2.csv')
+df_40keV_corrlength = pd.read_csv('visibility_results_40keV_corr_lengths.csv')
+prade_45keV_corrlength = pd.read_csv('Prade_remake2_results_45keV_corr_lengths.csv')
+prade_45keV_corrlength_v2 = pd.read_csv('Prade_remake_10um_results_45keV_corr_lengths_v2.csv')
+prade_45keV_corrlength_0966 = pd.read_csv('Prade_remake_10um_results_45keV_corr_lengths_0966diam.csv')
+prade_45keV_corrlength_0966_05mm = pd.read_csv('Prade_remake_10um_results_45keV_corr_lengths_0966diam_05mm.csv')
+
+# Data extracted from prade plot directly
+prade_experiment_45keV_corrlength_279 = pd.read_csv('prade_data_279.csv')
+prade_experiment_45keV_corrlength_0966 = pd.read_csv('prade_data_0996.csv')
+
+#Get prefactors from file for eplsion correlation plot 
+df = pd.read_csv("scaled_up_epsilons_v2.csv")
 prefactors = df["prefactor"]
+wavelength_20keV = df["wavelength"][3]
+wavelength_40keV = df["wavelength"][9]
+delta_n_squared_20keV = df["delta_n_squared"][3]
+delta_n_squared_40keV = df["delta_n_squared"][9]
+pre_ohne_corr_20keV = 3*np.pi**2/(wavelength_20keV**2)*f_sph* delta_n_squared_20keV
+pre_ohne_corr_40keV = 3*np.pi**2/(wavelength_40keV**2)*f_sph* delta_n_squared_40keV
 
+temp_pre_ohne_corr = 3*np.pi**2/(l_in_m**2)*f_sph* np.abs(delta_n)**2
+
+# correlation lengths from saved simulation data
+corr_lengths_20keV = np.array(df_20keV_corrlength_v2["Correlation length"])
+corr_lengths_40keV = np.array(df_40keV_corrlength["Correlation length"])
+corr_lengths_prade = np.array(prade_45keV_corrlength["Correlation length"])
+
+# Calculating analytical epsilon/ visibility values
+D_prime_corr_20keV = d_sph_in_um*1e-6 / corr_lengths_20keV
+D_prime_corr_40keV = d_sph_in_um*1e-6 / corr_lengths_40keV
+D_prime_corr_prade = d_sph_in_um*1e-6 / corr_lengths_prade
+
+epsilon_20keV = mu_d_normalisiert(D_prime_corr_20keV)*corr_lengths_20keV*pre_ohne_corr_20keV
+epsilon_40keV = mu_d_normalisiert(D_prime_corr_40keV)*corr_lengths_40keV*pre_ohne_corr_40keV
+epsilon_prade = mu_d_normalisiert(D_prime_corr_prade)*corr_lengths_prade*temp_pre_ohne_corr
+
+V_20keV = np.exp(-epsilon_20keV * t_samp_in_mm * 1e-3)
+V_40keV = np.exp(-epsilon_40keV * t_samp_in_mm * 1e-3)
+V_prade = np.exp(-epsilon_prade * t_samp_in_mm * 1e-3)
+V_prade_scaled = np.exp(-epsilon_prade * 1e-2)
+V_prade_scaled_sim = np.exp(-prade_45keV_corrlength_0966['Epsilon'] * 1e-2)
+V_prade_scaled_sim_05mm = np.exp(-prade_45keV_corrlength_0966_05mm['Epsilon'] * 1e-2)
 
 # Plot
 plt.figure(figsize=(8, 8))
-#plt.plot(D*1e6, mu_d_all[0,:]*prefactors[0], label='E = 10 keV analytical', color='green')
-#plt.plot(df_10keV['Sphere size (um)'], df_10keV['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated', color = 'green')
+#plt.plot(D*1e6, mu_d_all[0,:]*prefactors[0], label='E = 10 keV analytical', color='black')
+#plt.plot(df_10keV_thin_slices['Sphere size (um)'], df_10keV_thin_slices['Epsilon'], marker='s', linestyle='-', label = r'simulated 0.7 $\mu$m slices', color = 'green')
+#plt.plot(df_10keV_fixed['Sphere size (um)'], df_10keV_fixed['Epsilon'], marker='o', linestyle='--', label = r'simulated 1.4 $\mu$m slices', color = 'blue')
+#plt.plot(df_10keV_thick_slices['Sphere size (um)'], df_10keV_thick_slices['Epsilon'], marker='^', linestyle='-.', label = r'simulated 2.8 $\mu$m slices', color = 'red')
+#plt.plot(df_10keV_chunky_slices['Sphere size (um)'], df_10keV_chunky_slices['Epsilon'], marker='d', linestyle=':', label = r'simulated 15 $\mu$m slices', color = 'orange')
 #plt.plot(df_10keV_fixed['Sphere size (um)'], df_10keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated', color = 'green')
 #plt.plot(df_10keV_noabsorb['Sphere size (um)'], df_10keV_noabsorb['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated half fix', color = 'red')
-plt.plot(D*1e6, mu_d_all[1,:]*prefactors[1], label='E = 20 keV analytical', color='red')
-plt.plot(df_20keV_fixed['Sphere size (um)'], df_20keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'red')
+#plt.plot(D*1e6, mu_d_all[1,:]*prefactors[3], label='analytical', color='black')
+#plt.plot(df_20keV_05mm['Sphere size (um)'], df_20keV_05mm['Epsilon'], marker='o', linestyle='-', label = 'simulated total sample thickness 0.5 mm', color = 'red')
+#plt.plot(df_20keV_fixed['Sphere size (um)'], df_20keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'simulated total sample thickness 1 mm', color = 'blue')
+#plt.plot(df_20keV_2mm['Sphere size (um)'], df_20keV_2mm['Epsilon'], marker='o', linestyle='-', label = 'simulated total sample thickness 2 mm', color = 'green')
+#plt.plot(D*1e6, mu_d_all[1,:]*prefactors[4], label='analytical particle fraction 5%', color='magenta')
+#plt.plot(df_20keV_005['Sphere size (um)'], df_20keV_005['Epsilon'], marker='o', linestyle='-', label = 'simulated particle fraction 5%', color = 'magenta')
+#plt.plot(D*1e6, mu_d_all[1,:]*prefactors[5], label='analytical particle fraction 10%', color='cyan')
+#plt.plot(df_20keV_01['Sphere size (um)'], df_20keV_01['Epsilon'], marker='o', linestyle='-', label = 'simulated particle fraction 10%', color = 'cyan')
 #plt.plot(df_20keV['Sphere size (um)'], df_20keV['Epsilon'], marker='o', linestyle='-', label = 'E = 20 keV simulated', color = 'red')
-plt.plot(D*1e6, mu_d_all[2,:]*prefactors[2], label='E = 30 keV analytical', color = 'blue')
-plt.plot(df_30keV_fixed['Sphere size (um)'], df_30keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'blue')
+#plt.plot(D*1e6, mu_d_all[2,:]*prefactors[6], label='E = 30 keV analytical', color = 'blue')
+#plt.plot(df_30keV_fixed['Sphere size (um)'], df_30keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'blue')
 #plt.plot(df_highres_30keV['Sphere size (um)'], df_highres_30keV['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated high res', color = 'blue')
 #plt.plot(df_30keV['Sphere size (um)'], df_30keV['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'red')
-plt.plot(D*1e6, mu_d_all[3,:]*prefactors[3], label='E = 40 keV analytical', color = 'orange')
-plt.plot(df_40keV_fixed['Sphere size (um)'], df_40keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 40 keV simulated', color = 'orange')
+#plt.plot(D*1e6, mu_d_all[3,:]*prefactors[9], label='E = 40 keV analytical', color = 'orange')
+#plt.plot(df_40keV_fixed['Sphere size (um)'], df_40keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 40 keV simulated', color = 'orange')
+plt.plot(corr_lengths_prade*1e6, V_prade_scaled, label='analytical', color = 'blue')
+plt.plot(prade_45keV_corrlength_v2['Correlation length']*1e6, V_prade_scaled_sim_05mm, marker='o', linestyle='-', label = 'simulated', color = 'red')
+plt.scatter(prade_experiment_45keV_corrlength_0966['correlation length'], prade_experiment_45keV_corrlength_0966['visibility'], label='experimental', color = 'green')
+#plt.plot(corr_lengths_40keV*1e6, V_40keV, label='E = 40 keV analytical', color = 'orange')
+#plt.plot(df_40keV_corrlength['Correlation length']*1e6, df_40keV_corrlength['Visibility'], marker='o', linestyle='-', label = 'E = 40 keV simulated', color = 'orange')
 
 # Labels and title
-plt.xlabel('Sphere Size (μm)')
-plt.ylabel('Epsilon')
-plt.title('Epsilon vs Sphere Diameter')
-plt.xlim(2, 30)
+plt.xlabel(r'Correlation length in $\mu$m', fontsize=16)
+plt.ylabel('Visibility', fontsize=16)
+
+#plt.title('Epsilon vs Sphere Diameter at 10 keV')
+#plt.title(f"Epsilon vs Sphere Diameter at {E_in_keV:.1f} \n Thickness of sample: {t_samp_in_mm:.1f} mm | Particle fraction: {f_sph:.2f}")
+plt.title(f"Epsilon vs Correlation length at {E_in_keV:.1f} keV & particle size {d_sph_in_um} um \n simulated at 0.5 mm & scaled to 1 cm | Particle fraction: {f_sph:.3f}", fontsize=16)
+plt.xlim(0, 2.5)
 #plt.ylim(0.25, 1.7)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+
+plt.legend(fontsize=14)
 plt.grid(True)
-plt.legend()
 plt.tight_layout()
-plt.savefig("test5#_epsilon_diam_analyt.pdf", dpi=300, bbox_inches='tight')
-"""
-zeta10 = corr_lengths[0]/(D/2)
-zeta20 = corr_lengths[1]/(D/2)
+#plt.show()
+plt.savefig("prade_vgl_0966-05mm.pdf", dpi=300, bbox_inches='tight')
+
+
 def G(zeta):
     term1 = np.sqrt(1 - (zeta / 2)**2) * (1 + (1/8) * zeta**2)
     term2 = 0.5 * zeta**2 * (1 - (zeta / 4)**2) * np.log(zeta / (2 + np.sqrt(4 - zeta**2)))
     return term1 + term2
 
 def xray_sld(total_electrons, molar_mass, density):
-
+    """
     Calculate X-ray Scattering Length Density (SLD) in Å⁻²
     Inputs:
         total_electrons: total Z per molecule
         molar_mass: in g/mol
         density: in g/cm³
-
-    N_A = 6.022e23            # mol⁻¹
+    """
+    N_A = 6.022e23
     V_mol = (molar_mass / density) / N_A 
     return (r_e * total_electrons) / V_mol
+
+zeta10 = corr_lengths[0]/(D/2)
+zeta20 = corr_lengths[1]/(D/2)
 
 sld_sph = xray_sld(total_electrons = 30, molar_mass = 60.08, density = samp2d.rho_sph_in_g_cm3 )
 sld_bkg = xray_sld(total_electrons = 20, molar_mass = 46.07, density = samp2d.rho_bkg_in_g_cm3 )
 delta_sld = sld_sph - sld_bkg
 sigmas = 3/2 * l_in_m**2 * D/2 *f_sph * delta_sld**2
-print(l_in_m**2)
-print(delta_sld**2)
 
-plt.plot(D*1e6,sigmas*(1-G(zeta10)), color = 'red')
-plt.plot(D*1e6,sigmas*(1-G(zeta20)), color = 'red')
-#plt.plot(D*1e6, mu_d_all[0,:], label='E = 10 keV analytical', color='green')
-plt.savefig("test_test.pdf", dpi=300, bbox_inches='tight')
+
 """
+new_data = {
+    "energy": [E_in_keV],   
+    "particle fraction": [f_sph],
+    "wavelength": [l_in_m],
+    "corr_length": [corr_length],
+    "delta_n_squared": [np.abs(delta_n)**2],
+    "prefactor": [pre],
+}
 
+new_row = pd.DataFrame(new_data)
+
+new_row.to_csv("scaled_up_epsilons_v2.csv", mode='a', header=False, index=False)
+"""

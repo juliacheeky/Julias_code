@@ -8,7 +8,8 @@ class Propagator:
 
     def __init__(self, 
                  grat: Grating, 
-                 samp: Sample) -> None:
+                 samp: Sample,
+                 prop_in_m: float) -> None:
         """
         Initializes an instance of the wave field class with the specified 
         parameters.
@@ -28,11 +29,12 @@ class Propagator:
         
         self.grat = grat
         self.samp = samp 
+        self.prop_in_m = prop_in_m
         self.talbot_in_m = 2 * (grat.px_in_um * 1e-6)**2 / l_in_m 
         self.grat2det_in_m = 1/4 * self.talbot_in_m  
-        self.grat2samp_in_m = self.grat2det_in_m - prop_in_m - \
+        self.grat2samp_in_m = self.grat2det_in_m - self.prop_in_m - \
                               (samp.t_samp_in_mm * 1e-3) / 2
-        self.samp2det_in_m = prop_in_m - (samp.t_samp_in_mm * 1e-3) / 2
+        self.samp2det_in_m = self.prop_in_m - (samp.t_samp_in_mm * 1e-3) / 2
         self.bin_grat = grat.create_grating()
 
     # --- Basic operations ----------------------------------------------------

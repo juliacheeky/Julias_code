@@ -4,7 +4,7 @@ from skimage.draw import disk
 import xraylib as xrl
 from typing import Tuple
 from parameters import * 
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 class Sample:                             
     
@@ -116,53 +116,19 @@ class Sample:
     
     # --- Spheres -------------------------------------------------------------
 
-    """
-    def draw_sph_centers_2d(self, 
-                            seed: int) -> Tuple[np.ndarray, 
-                                                np.ndarray]:
-       
-        Generates random centers for spheres within a specified sampling area.
-
-        This method uses a fixed random seed for reproducibility and generates 
-        2D random coordinates for the centers of the spheres, ensuring that the 
-        spheres fit within the sampling area.
-
-        Args:
-            seed (int): Seed for the random number generator to ensure
-                        reproducibility.
-
-        Returns:
-            Tuple[np.ndarray, np.ndarray]: A tuple containing the Y-coordinates
-                                           and X-coordinates of the sphere 
-                                           centers, respectively.
-                                           
-      
-
-        np.random.seed(seed)
-        cZ = np.random.randint(1 * self.r_sph_in_pix, 
-                               (self.t_samp_in_pix - 1 * \
-                                self.r_sph_in_pix), self.num_sph_2dslice)
-        cX = np.random.randint(1 * self.r_sph_in_pix, 
-                               (samp_size_in_pix - 1 * \
-                                self.r_sph_in_pix), self.num_sph_2dslice)
-
-        return cZ, cX
-        """
-    # --- Sample 2D -----------------------------------------------------------
-
-    def centres_min_overlap(num_circles: int, radius: int, maxX: int, maxY: int, seed: int):
+    def draw_sph_centers_2d(self, seed: int):
         np.random.seed(seed) # set seed to allow reproducability
 
         # get twice as many a needed, so we can pick the furthest apart
-        centres = np.random.randint(radius, [maxX-radius, maxY-radius], (num_circles*2, 2))
+        centres = np.random.randint(self.r_sph_in_pix, [self.t_samp_in_pix-self.r_sph_in_pix, samp_size_in_pix-self.r_sph_in_pix], (self.num_sph_2dslice*2, 2))
         # calculate distances^2 between all pairs of points
         distances = np.sum(np.square(centres.reshape((-1, 1, 2)) - centres), -1)
         # ignore values in lower half by setting them to max possible
-        distances[np.arange(distances.shape[0])[:,None] >= np.arange(distances.shape[1])] = maxX*maxY
+        distances[np.arange(distances.shape[0])[:,None] >= np.arange(distances.shape[1])] = self.t_samp_in_pix*samp_size_in_pix
         # get the minumim distance to previous points
         min_distances = np.nanmin(distances, 0)
         # sort indices by descreasing distance, get best half
-        indices = np.argsort(-min_distances)[0:num_circles]
+        indices = np.argsort(-min_distances)[0:self.num_sph_2dslice]
         return centres.take(indices, 0)
 
 
@@ -191,12 +157,12 @@ class Sample:
         # Create the 2D slice that will contain the projected spheres
         slc2d_sph = np.zeros((samp_size_in_pix,self.t_samp_in_pix), dtype=np.uint16) 
         
-        cZ, cX = self.draw_sph_centers_2d(seed)
-        for x,z in zip(cX, cZ):
+        centres = self.draw_sph_centers_2d(seed)
+
+        for z,x in centres:
             rr, cc = disk((x,z),self.r_sph_in_pix, shape=(samp_size_in_pix,self.t_samp_in_pix))# Create a 2D sphere with the center at (cX, cZ)
             slc2d_sph[rr, cc] = 1
-        # Convolve the projected sphere with the image 'slc2d_sph'. This 
-        # repeats the sphere in the positions of the random sphere centers
+
 
         slc2d_sph_real = np.abs(slc2d_sph)
         
@@ -270,7 +236,4 @@ im = ax.imshow(sample_2d, cmap='gray', aspect='equal')
 cbar = fig.colorbar(im, ax=ax)
 plt.savefig("sample_2d_slice.png", dpi=300, bbox_inches='tight')
 plt.close(fig)
-fraction_ones = np.sum(sample_2d) / sample_2d.size
-
-print(f"Fraction of ones: {fraction_ones:.2f}")
 """
