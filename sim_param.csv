@@ -1,19 +1,19 @@
-Energy in keV,20
-Simulated pixel size in m,1e-08
-Simulated image size in pix,89600
+Energy in keV,45
+Simulated pixel size in m,1e-06
+Simulated image size in pix,8960
 Grating period in X in um,7
-Sample size in pix,89600
+Sample size in pix,8960
 Sample thickness in mm,1
 Sphere diameter in um,20
-Packing fraction of the spheres,0.05
+Packing fraction of the spheres,0.01
 Sphere material,SiO2
 Background material,C2H6O
-Number of spheres,142
-Number of slices,714
-Thickness of a sample slice in pix,140
-Talbot distance in m,1.6
-Grating-to-detector distance in cm,39.5
-Grating-to-sample distance in cm,2.5
-Sample-to-detector distance in cm,36.9
+Number of spheres,285
+Number of slices,500
+Thickness of a sample slice in pix,2
+Talbot distance in m,3.6
+Grating-to-detector distance in cm,88.9
+Grating-to-sample distance in cm,-1.1
+Sample-to-detector distance in cm,90.0
 Propagation distance in cm,17.5
-Simulation time in min,4.2
+Simulation time in min,0.5

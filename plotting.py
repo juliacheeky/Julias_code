@@ -4,9 +4,11 @@ from sample import *
 from propagator import *
 import numpy as np
 from parameters import *
+from skull_parameter import *
 from detector import *
 import os
 import pandas as pd
+import time
 
 
 def plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True):  
@@ -14,7 +16,7 @@ def plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True):
     Iref_large, Isamp_large = prop.obtain_Iref_Isamp(wavefld_bg, prop.bin_grat)
     G2 = det.create_g2()
     Iref_stepped, Isamp_stepped = det.phasestepping_conv(Isamp_large, Iref_large, G2)
-    os.remove("clossser_look_test.pdf")
+
     I_max_samp = np.max(Isamp_stepped)
     I_min_samp = np.min(Isamp_stepped)
     I_max_ref = np.max(Iref_stepped)
@@ -34,6 +36,7 @@ def plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True):
     plt.title(f"Intensity Profile at {E_in_keV:.1f} keV | Visibility with sample: {visibility.real:.3f} \n Thickness of sample: {t_samp_in_mm:.1f} mm | Mean Intensity: {np.mean(Isamp_stepped.real):.3f}")
     #plt.title(f"Intensity Profile at {E_in_keV:.1f} keV no G2 \n Thickness of sample: {t_samp_in_mm:.1f} mm | Mean Intensity: {np.mean(Isamp_stepped.real):.3f}")
     plt.xlabel('Pixels')
+    plt.xlim(1000, 1200)
     plt.ylabel('Intensity')
     plt.legend()
 
@@ -41,7 +44,10 @@ def plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True):
         #path_image = os.path.join("images", "bone_like_1" ,f"intensity_withG2_with_absorb_2mat_{name_mat_sph}_{name_mat_bkg}_{E_in_keV:.1f}keV_{t_samp_in_mm:.1f}mm.pdf")
         path_image = os.path.join("clossser_look_test.pdf")
         plt.savefig(path_image, dpi=600, bbox_inches='tight')
+        time.sleep(5)
     del Iref_stepped, Isamp_stepped
+    os.remove("clossser_look_test.pdf")
+
 
 def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat):
     Iref_large, Isamp_large = prop.obtain_Iref_Isamp(wavefld_bg, bin_grat)
@@ -60,7 +66,7 @@ def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat):
     visibility_r = a_1r.real/a_0r
     visibility = visibility_s/visibility_r
     epsilon = -np.log(visibility) / (t_samp_in_mm * 1e-3)
-    print(f"Mean with sample: {np.mean(Isamp_stepped.real):.3f} at Energy: {E_in_keV:.1f} keV")
+    print(f"Mean with sample: {np.mean(Isamp_stepped.real):.3f} at Energy: {E_in_keV_skull:.1f} keV")
     return visibility, epsilon
 
 def plot_epsilon_vs_d():

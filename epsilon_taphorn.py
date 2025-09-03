@@ -92,34 +92,46 @@ pre = 3*np.pi**2/(l_in_m**2)*f_sph* np.abs(delta_n)**2*corr_length
 
 df_lowres_30keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_30keV_lowres.csv')
 df_highres_30keV = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_30keV_highres.csv')
-#df_10keV_fixed = pd.read_csv('dark_field_SiO2_Ethanol_diameter/double_corrected_visibility_results_10keV.csv')
-df_10keV_fixed = pd.read_csv("visibility_results_10keV_v2.csv")
-df_20keV_fixed = pd.read_csv("visibility_results_20keV_v2.csv")
+df_10keV_fixed = pd.read_csv("dark_field_SiO2_Ethanol_diameter/visibility_results_10keV_v2.csv")
+df_20keV_fixed = pd.read_csv("dark_field_SiO2_Ethanol_diameter/visibility_results_20keV_v2.csv")
 df_10keV_noabsorb= pd.read_csv('dark_field_SiO2_Ethanol_diameter/corrected_visibility_results_10keV.csv')
 df_30keV_fixed = pd.read_csv('dark_field_SiO2_Ethanol_diameter/double_corrected_visibility_results_30keV.csv')
 df_40keV_fixed = pd.read_csv('dark_field_SiO2_Ethanol_diameter/double_corrected_visibility_results_40keV.csv')
-df_10keV_thin_slices = pd.read_csv('visibility_results_10keV_1mm_slc=0.7um.csv')
-df_10keV_thick_slices = pd.read_csv('visibility_results_10keV_1mm_slc=2.8um.csv')
-df_10keV_chunky_slices = pd.read_csv('visibility_results_10keV_1mm_slc=15um.csv')
+df_10keV_thin_slices = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_10keV_1mm_slc=0.7um.csv')
+df_10keV_thick_slices = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_10keV_1mm_slc=2.8um.csv')
+df_10keV_chunky_slices = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_10keV_1mm_slc=15um.csv')
 
-df_20keV_01 = pd.read_csv('visibility_results_20keV_1mm_f=0.1.csv')
-df_20keV_005 = pd.read_csv('visibility_results_20keV_1mm_f=0.05.csv')
+df_20kev_double_res = pd.read_csv('visibility_results_20keV_double_res.csv')
+df_20keV_tenth_res = pd.read_csv('visibility_results_20keV_tenth_res.csv')
 
-df_20keV_05mm = pd.read_csv('visibility_results_20keV_0.5mm_v2.csv')
-df_20keV_2mm = pd.read_csv('visibility_results_20keV_2mm_f=0.01.csv')
+df_20keV_5_10_7_res = pd.read_csv('visibility_results_20keV_5_10-7_res.csv')
+
+df_10keV_10_6_res = pd.read_csv('visibility_results_10keV_10-6_res.csv')
+df_20keV_10_6_res = pd.read_csv('visibility_results_20keV_10-6_res.csv')
+df_30keV_10_6_res = pd.read_csv('visibility_results_30keV_10-6_res.csv')
+df_40keV_10_6_res = pd.read_csv('visibility_results_40keV_10-6_res.csv')
+
+df_20keV_01 = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_20keV_1mm_f=0.1.csv')
+df_20keV_005 = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_20keV_1mm_f=0.05.csv')
+
+df_20keV_05mm = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_20keV_0.5mm_v2.csv')
+df_20keV_2mm = pd.read_csv('dark_field_SiO2_Ethanol_diameter/visibility_results_20keV_2mm_f=0.01.csv')
 
 # Data for correlation plots
-df_20keV_corrlength = pd.read_csv('visibility_results_20keV_corr_lengths.csv')
-df_20keV_corrlength_v2 = pd.read_csv('visibility_results_20keV_corr_lengths_v2.csv')
-df_40keV_corrlength = pd.read_csv('visibility_results_40keV_corr_lengths.csv')
-prade_45keV_corrlength = pd.read_csv('Prade_remake2_results_45keV_corr_lengths.csv')
-prade_45keV_corrlength_v2 = pd.read_csv('Prade_remake_10um_results_45keV_corr_lengths_v2.csv')
-prade_45keV_corrlength_0966 = pd.read_csv('Prade_remake_10um_results_45keV_corr_lengths_0966diam.csv')
-prade_45keV_corrlength_0966_05mm = pd.read_csv('Prade_remake_10um_results_45keV_corr_lengths_0966diam_05mm.csv')
+df_20keV_corrlength = pd.read_csv('dark_field_parde_correlation_change/visibility_results_20keV_corr_lengths.csv')
+df_20keV_corrlength_v2 = pd.read_csv('dark_field_parde_correlation_change/visibility_results_20keV_corr_lengths_v2.csv')
+df_20keV_corrlength_20um = pd.read_csv('dark_field_parde_correlation_change/visibility_results_20keV_corr_lengths_20um.csv')
+df_40keV_corrlength = pd.read_csv('dark_field_parde_correlation_change/visibility_results_40keV_corr_lengths.csv')
+
+
+prade_45keV_corrlength = pd.read_csv('dark_field_parde_correlation_change/Prade_remake2_results_45keV_corr_lengths.csv')
+prade_45keV_corrlength_v2 = pd.read_csv('dark_field_parde_correlation_change/Prade_remake_10um_results_45keV_corr_lengths_v2.csv')
+prade_45keV_corrlength_0966 = pd.read_csv('dark_field_parde_correlation_change/Prade_remake_10um_results_45keV_corr_lengths_0966diam.csv')
+prade_45keV_corrlength_0966_05mm = pd.read_csv('dark_field_parde_correlation_change/Prade_remake_10um_results_45keV_corr_lengths_0966diam_05mm.csv')
 
 # Data extracted from prade plot directly
-prade_experiment_45keV_corrlength_279 = pd.read_csv('prade_data_279.csv')
-prade_experiment_45keV_corrlength_0966 = pd.read_csv('prade_data_0996.csv')
+prade_experiment_45keV_corrlength_279 = pd.read_csv('dark_field_parde_correlation_change/prade_data_279.csv')
+prade_experiment_45keV_corrlength_0966 = pd.read_csv('dark_field_parde_correlation_change/prade_data_0996.csv')
 
 #Get prefactors from file for eplsion correlation plot 
 df = pd.read_csv("scaled_up_epsilons_v2.csv")
@@ -164,43 +176,65 @@ plt.figure(figsize=(8, 8))
 #plt.plot(df_10keV_fixed['Sphere size (um)'], df_10keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated', color = 'green')
 #plt.plot(df_10keV_noabsorb['Sphere size (um)'], df_10keV_noabsorb['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated half fix', color = 'red')
 #plt.plot(D*1e6, mu_d_all[1,:]*prefactors[3], label='analytical', color='black')
+
 #plt.plot(df_20keV_05mm['Sphere size (um)'], df_20keV_05mm['Epsilon'], marker='o', linestyle='-', label = 'simulated total sample thickness 0.5 mm', color = 'red')
-#plt.plot(df_20keV_fixed['Sphere size (um)'], df_20keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'simulated total sample thickness 1 mm', color = 'blue')
+#plt.plot(df_20kev_double_res['Sphere size (um)'], df_20kev_double_res['Epsilon'], marker='o', linestyle='-', label = r'simulated $5x10^{-9}$ m pixel size', color = 'orange')
+#plt.plot(df_20keV_fixed['Sphere size (um)'], df_20keV_fixed['Epsilon'], marker='o', linestyle='-', label = r'simulated $1x10^{-8}$ m pixel size', color = 'blue')
+#plt.plot(df_20keV_tenth_res['Sphere size (um)'], df_20keV_tenth_res['Epsilon'], marker='o', linestyle='-', label = r'simulated $1x10^{-7}$ m pixel size', color = 'green')
+#plt.plot(df_20keV_5_10_7_res['Sphere size (um)'], df_20keV_5_10_7_res['Epsilon'], marker='o', linestyle='-', label = r'simulated $5x10^{-7}$ m pixel size', color = 'purple')
+#plt.plot(df_20keV_10_6_res['Sphere size (um)'], df_20keV_10_6_res['Epsilon'], marker='o', linestyle='-', label = r'simulated $1x10^{-6}$ m pixel size', color = 'red')
 #plt.plot(df_20keV_2mm['Sphere size (um)'], df_20keV_2mm['Epsilon'], marker='o', linestyle='-', label = 'simulated total sample thickness 2 mm', color = 'green')
 #plt.plot(D*1e6, mu_d_all[1,:]*prefactors[4], label='analytical particle fraction 5%', color='magenta')
 #plt.plot(df_20keV_005['Sphere size (um)'], df_20keV_005['Epsilon'], marker='o', linestyle='-', label = 'simulated particle fraction 5%', color = 'magenta')
 #plt.plot(D*1e6, mu_d_all[1,:]*prefactors[5], label='analytical particle fraction 10%', color='cyan')
 #plt.plot(df_20keV_01['Sphere size (um)'], df_20keV_01['Epsilon'], marker='o', linestyle='-', label = 'simulated particle fraction 10%', color = 'cyan')
 #plt.plot(df_20keV['Sphere size (um)'], df_20keV['Epsilon'], marker='o', linestyle='-', label = 'E = 20 keV simulated', color = 'red')
-#plt.plot(D*1e6, mu_d_all[2,:]*prefactors[6], label='E = 30 keV analytical', color = 'blue')
+
 #plt.plot(df_30keV_fixed['Sphere size (um)'], df_30keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'blue')
 #plt.plot(df_highres_30keV['Sphere size (um)'], df_highres_30keV['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated high res', color = 'blue')
 #plt.plot(df_30keV['Sphere size (um)'], df_30keV['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'red')
-#plt.plot(D*1e6, mu_d_all[3,:]*prefactors[9], label='E = 40 keV analytical', color = 'orange')
-#plt.plot(df_40keV_fixed['Sphere size (um)'], df_40keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 40 keV simulated', color = 'orange')
-plt.plot(corr_lengths_prade*1e6, V_prade_scaled, label='analytical', color = 'blue')
-plt.plot(prade_45keV_corrlength_v2['Correlation length']*1e6, V_prade_scaled_sim_05mm, marker='o', linestyle='-', label = 'simulated', color = 'red')
-plt.scatter(prade_experiment_45keV_corrlength_0966['correlation length'], prade_experiment_45keV_corrlength_0966['visibility'], label='experimental', color = 'green')
+
+
+#plt.plot(df_40keV_fixed['Sphere size (um)'], df_40keV_fixed['Epsilon'], marker='o', linestyle='-', label = r'simulated $1x10^{-8}$ m pixel size', color = 'green')
+#plt.plot(D*1e6, mu_d_all[0,:]*prefactors[0], label='E = 10 keV analytical', color='green')
+#plt.plot(df_10keV_10_6_res['Sphere size (um)'], df_10keV_10_6_res['Epsilon'], marker='o', linestyle='-', label = 'E = 10 keV simulated', color = 'green')
+plt.plot(D*1e6, mu_d_all[1,:]*prefactors[3], label='E = 20 keV analytical', color='red')
+plt.plot(df_20keV_fixed['Sphere size (um)'], df_20keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 20 keV simulated', color = 'red')
+plt.plot(D*1e6, mu_d_all[2,:]*prefactors[6], label='E = 30 keV analytical', color = 'blue')
+plt.plot(df_30keV_fixed['Sphere size (um)'], df_30keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 30 keV simulated', color = 'blue')
+plt.plot(D*1e6, mu_d_all[3,:]*prefactors[9], label='E = 40 keV analytical', color = 'orange')
+plt.plot(df_40keV_fixed['Sphere size (um)'], df_40keV_fixed['Epsilon'], marker='o', linestyle='-', label = 'E = 40 keV simulated', color = 'orange')
+#plt.plot(corr_lengths_prade*1e6, V_prade_scaled, label='analytical', color = 'blue')
+#plt.plot(prade_45keV_corrlength_v2['Correlation length']*1e6, V_prade_scaled_sim_05mm, marker='o', linestyle='-', label = 'simulated', color = 'red')
+#plt.scatter(prade_experiment_45keV_corrlength_0966['correlation length'], prade_experiment_45keV_corrlength_0966['visibility'], label='experimental', color = 'green')
 #plt.plot(corr_lengths_40keV*1e6, V_40keV, label='E = 40 keV analytical', color = 'orange')
 #plt.plot(df_40keV_corrlength['Correlation length']*1e6, df_40keV_corrlength['Visibility'], marker='o', linestyle='-', label = 'E = 40 keV simulated', color = 'orange')
-
+#plt.plot(df_20keV_corrlength_20um['Correlation length']*1e6, df_20keV_corrlength_20um['Visibility'], marker='o', linestyle='-', label = 'E = 20 keV simulated 20 um sphere diameter', color = 'blue')
+#plt.plot(corr_lengths_20keV*1e6, V_20keV, label='E = 20 keV analytical', color = 'blue')
 # Labels and title
-plt.xlabel(r'Correlation length in $\mu$m', fontsize=16)
-plt.ylabel('Visibility', fontsize=16)
+#plt.xlabel(r'Correlation length in $\mu$m', fontsize=16)
+plt.xlabel(r'Sphere diameter in $\mu$m', fontsize=16)
+plt.ylabel('Epsilon', fontsize=16)
 
 #plt.title('Epsilon vs Sphere Diameter at 10 keV')
-#plt.title(f"Epsilon vs Sphere Diameter at {E_in_keV:.1f} \n Thickness of sample: {t_samp_in_mm:.1f} mm | Particle fraction: {f_sph:.2f}")
-plt.title(f"Epsilon vs Correlation length at {E_in_keV:.1f} keV & particle size {d_sph_in_um} um \n simulated at 0.5 mm & scaled to 1 cm | Particle fraction: {f_sph:.3f}", fontsize=16)
-plt.xlim(0, 2.5)
+plt.title(
+    f"Epsilon vs Sphere Diameter at resolution $1\\times10^{{-8}}$ m\n"
+    f"Thickness of sample: {t_samp_in_mm:.1f} mm | Particle fraction: {f_sph:.2f}",
+    fontsize=16
+)
+#plt.title(f"Epsilon vs Sphere Diameter at at resolution $1x10^{-6}$ \n Thickness of sample: {t_samp_in_mm:.1f} mm | Particle fraction: {f_sph:.2f}", fontsize=16)
+#plt.title(f"Epsilon vs Correlation length at {E_in_keV:.1f} keV & particle size {d_sph_in_um} um \n simulated at 0.5 mm & scaled to 1 cm | Particle fraction: {f_sph:.3f}", fontsize=16)
+#plt.xlim(0, 2.5)
+plt.xlim(0, 30)
 #plt.ylim(0.25, 1.7)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 
-plt.legend(fontsize=14)
+plt.legend(fontsize=12, loc='upper right')
 plt.grid(True)
 plt.tight_layout()
 #plt.show()
-plt.savefig("prade_vgl_0966-05mm.pdf", dpi=300, bbox_inches='tight')
+plt.savefig("epsilon_diam_10-8res_compare_zoom.pdf", dpi=300, bbox_inches='tight')
 
 
 def G(zeta):

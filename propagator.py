@@ -1,14 +1,14 @@
 import numpy as np
 from tqdm import tqdm
 from grating import *
-from sample import *
+from skull_sample import *
 from parameters import *
 
 class Propagator:
 
     def __init__(self, 
                  grat: Grating, 
-                 samp: Sample,
+                 samp: Sample_Skull,
                  prop_in_m: float) -> None:
         """
         Initializes an instance of the wave field class with the specified 
