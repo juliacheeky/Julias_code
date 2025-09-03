@@ -14,7 +14,6 @@ class Sample_Skull:
                  mat_air: str
                  ) -> None:
 
-        self.f_sph = f_sph
         self.mat_bone = mat_bone 
         self.mat_air = mat_air
 
@@ -25,14 +24,14 @@ class Sample_Skull:
         binary_cropped = binary[900:2300,600:2600]
         scale_factor = pixel_size_skull / sim_pix_size_in_m
 
-        positive = cv2.resize(
+        self.positive = cv2.resize(
             binary_cropped,
             None,
             fx=scale_factor,
             fy=scale_factor,
             interpolation=cv2.INTER_NEAREST
         )
-        t_samp_in_pix = positive.shape[1]
+        t_samp_in_pix = self.positive.shape[1]
         self.t_samp_in_mm = t_samp_in_pix * sim_pix_size_in_m * 1e3
         print(f"Sample thickness in mm: {self.t_samp_in_mm:.3f}")
         self.num_slc = int(t_samp_in_pix /t_slc_in_pix) 
@@ -51,24 +50,9 @@ class Sample_Skull:
     
     def create_slice2d(self)-> Tuple[np.ndarray, 
                                            np.ndarray]:
-        image = cv2.imread("04-02__rec_Sag1236.bmp", cv2.IMREAD_GRAYSCALE)
-        pixel_size_skull = 6e-6
-        print(image)
-        ret, binary = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        print(binary.shape, "binary shape")
-        binary = (binary > 0).astype(np.uint8) 
-        binary_cropped = binary[900:2300,600:2600]
-        scale_factor = pixel_size_skull / sim_pix_size_in_m
 
-        positive = cv2.resize(
-            binary_cropped,
-            None,
-            fx=scale_factor,
-            fy=scale_factor,
-            interpolation=cv2.INTER_NEAREST
-        )
-        negative = np.ones(positive.shape) - positive
-        return positive, negative
+        negative = np.ones(self.positive.shape) - self.positive
+        return self.positive, negative
     
     
     def create_projected_1d_slices(self) -> Tuple[np.ndarray,np.ndarray]:
