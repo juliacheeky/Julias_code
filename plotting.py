@@ -49,7 +49,7 @@ def plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True):
     os.remove("clossser_look_test.pdf")
 
 
-def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat):
+def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat,thick_samp_mm=t_samp_in_mm):
     Iref_large, Isamp_large = prop.obtain_Iref_Isamp(wavefld_bg, bin_grat)
     G2 = det.create_g2()
     Iref_stepped, Isamp_stepped = det.phasestepping_conv(Isamp_large, Iref_large, G2)
@@ -65,7 +65,7 @@ def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat):
     visibility_s = a_1s.real/a_0s
     visibility_r = a_1r.real/a_0r
     visibility = visibility_s/visibility_r
-    epsilon = -np.log(visibility) / (t_samp_in_mm * 1e-3)
+    epsilon = -np.log(visibility) / (thick_samp_mm * 1e-3)
     print(f"Mean with sample: {np.mean(Isamp_stepped.real):.3f} at Energy: {E_in_keV_skull:.1f} keV")
     return visibility, epsilon
 

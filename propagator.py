@@ -147,9 +147,9 @@ class Propagator:
 
         slice_profiles_path = "slices_data.npz"
         data = np.load(slice_profiles_path)
-        slc2d_sph_full = data['slc2d_sph_padded']
+        self.slc2d_sph_full = data['slc2d_sph_padded']
         slc2d_bkg_full = data['slc2d_bkg_padded']   
-        sample_compressed = self.samp.samp_with_refract_property(slc2d_sph_full* sim_pix_size_in_m,
+        sample_compressed = self.samp.samp_with_refract_property(self.slc2d_sph_full* sim_pix_size_in_m,
                            slc2d_bkg_full * sim_pix_size_in_m)
         for i in tqdm(range(self.samp.num_slc)):
         #for i in tqdm(range(1000)):            

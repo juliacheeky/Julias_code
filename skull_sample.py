@@ -32,8 +32,8 @@ class Sample_Skull:
             interpolation=cv2.INTER_NEAREST
         )
         t_samp_in_pix = self.positive.shape[1]
-        self.t_samp_in_mm = t_samp_in_pix * sim_pix_size_in_m * 1e3
-        print(f"Sample thickness in mm: {self.t_samp_in_mm:.3f}")
+        self.thickness_in_mm = t_samp_in_pix * sim_pix_size_in_m * 1e3
+        print(f"Sample thickness in mm: {self.thickness_in_mm:.3f}")
         self.num_slc = int(t_samp_in_pix /t_slc_in_pix) 
 
         self.rho_bone_in_g_cm3 = rho_bone_in_g_cm3
@@ -99,10 +99,14 @@ class Sample_Skull:
                np.exp(-((self.mu_bone_in_1_m / 2) * samp_sph_in_m + \
                       (self.mu_air_in_1_m / 2) * samp_bkg_in_m)) 
 
-
-"""samp2d = Sample_Skull(mat_bone = mat_bone, mat_air = mat_air) 
+"""
+samp2d = Sample_Skull(mat_bone = mat_bone, mat_air = mat_air) 
 
 positive, negative = samp2d.create_slice2d()
+print(positive.shape)
+profiles_bones, profiles_pores = samp2d.create_projected_1d_slices()
+print(profiles_bones.shape)
+
 
 plt.imshow(positive, cmap='gray', aspect='equal')
 
