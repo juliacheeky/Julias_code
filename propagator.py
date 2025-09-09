@@ -1,14 +1,16 @@
 import numpy as np
 from tqdm import tqdm
 from grating import *
-from skull_sample import *
+from sample import *
+#from skull_sample import *
 from parameters import *
+#from skull_parameter import *
 
 class Propagator:
 
     def __init__(self, 
                  grat: Grating, 
-                 samp: Sample_Skull,
+                 samp: Sample,  # muss zu Skull_sample gewechselt werden fue skull
                  prop_in_m: float) -> None:
         """
         Initializes an instance of the wave field class with the specified 
@@ -33,8 +35,8 @@ class Propagator:
         self.talbot_in_m = 2 * (grat.px_in_um * 1e-6)**2 / l_in_m 
         self.grat2det_in_m = 1/4 * self.talbot_in_m  
         self.grat2samp_in_m = self.grat2det_in_m - self.prop_in_m - \
-                              (samp.t_samp_in_mm * 1e-3) / 2
-        self.samp2det_in_m = self.prop_in_m - (samp.t_samp_in_mm * 1e-3) / 2
+                              (samp.thickness_in_mm * 1e-3) / 2
+        self.samp2det_in_m = self.prop_in_m - (samp.thickness_in_mm * 1e-3) / 2
         self.bin_grat = grat.create_grating()
 
     # --- Basic operations ----------------------------------------------------

@@ -69,8 +69,8 @@ class Sample:
 
         """
                      
-        self.t_samp_in_mm = t_samp_in_mm
-        self.t_samp_in_pix = int((self.t_samp_in_mm * 1e-3) / sim_pix_size_in_m)
+        self.thickness_in_mm = t_samp_in_mm
+        self.t_samp_in_pix = int((self.thickness_in_mm * 1e-3) / sim_pix_size_in_m)
         self.num_slc = int(self.t_samp_in_pix /t_slc_in_pix)
         self.d_sph_in_um = d_sph_in_um
         self.d_sph_in_pix = int((self.d_sph_in_um * 1e-6) / sim_pix_size_in_m)

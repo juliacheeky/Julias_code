@@ -62,16 +62,16 @@ try:
         corr_length = (l_in_m*distance)/(px_in_um * 1e-6) 
         print(f"Visibility with sample: {visibility.real:.3f} at Energy: {E_in_keV:.1f} keV distance to detector: {distance*1e2:.2f} cm")
         print(f"Correlation length: {corr_length*1e6:.2f} um")
-        particle_fraction = np.sum(prop.slc2d_sph_full)/(samp_size_in_pix*t_samp_in_mm * 1e-3/sim_pix_size_in_m)
+        particle_fraction = np.sum(prop.slc2d_sph_full)/(samp_size_in_pix*sampskull.thickness_in_mm * 1e-3/sim_pix_size_in_m)
         results.append([distance, corr_length, visibility.real, epsilon.real])
 
 
 
-    with open("skull_test2.csv", "w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["Propagation distance","Correlation length", "Visibility", "Epsilon"])
-        writer.writerows(results)
-    
+        with open("skull_test4_10-7.csv", "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["Propagation distance","Correlation length", "Visibility", "Epsilon"])
+            writer.writerows(results)
+        
 
 finally:
 

@@ -2,6 +2,7 @@ import numpy as np
 import scipy.fft
 import scipy.ndimage as nd
 from parameters import *
+#from skull_parameter import *
 
 class Detector:
 
@@ -16,6 +17,7 @@ class Detector:
         """
         self.px_in_um = px_in_um
         self.px_in_pix = int((self.px_in_um * 1e-6) / sim_pix_size_in_m)
+        self.binning_factor = binning_factor
 
     
     def scale_img_with_Poisson_noise(self,
@@ -63,7 +65,23 @@ class Detector:
         conv_img_PSF = nd.gaussian_filter(img, sigma)     
         
         return conv_img_PSF
-    
+
+    def img_binning(self, img: np.ndarray) -> np.ndarray:
+        """
+        Bins the input image by the specified binning factor.
+
+        Args:
+            img (np.ndarray): The input image to be binned.
+
+        Returns:
+            np.ndarray: The binned image.
+        """
+
+        n = len(img) // self.binning_factor
+        img = img[:n * self.binning_factor]  # Trim to a multiple of binning_factor
+        binned_img = img.reshape(n, self.binning_factor).mean(axis=1)
+        return binned_img
+
     def create_g2(self):
 
         x_walk=np.linspace(0, img_size_in_pix, img_size_in_pix)
@@ -76,3 +94,5 @@ class Detector:
         Isamp_stepped = scipy.fft.ifftn(scipy.fft.fftn(Isamp) * scipy.fft.fftn(G2))/ np.sum(G2)
         return Iref_stepped, Isamp_stepped
 
+
+             

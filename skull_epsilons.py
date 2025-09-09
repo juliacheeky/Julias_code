@@ -9,6 +9,8 @@ from scipy.optimize import curve_fit
 import os
 
 skull_2 = pd.read_csv('skull_test2.csv')
+skull_3 = pd.read_csv('skull_test3.csv')
+skull_4 = pd.read_csv('skull_test4_10-7.csv')
 t_samp = 12e-3  
 
 xdata = np.array(skull_2['Correlation length'])*1e6
@@ -23,19 +25,6 @@ R_fit, sigma_fit = popt
 print(f"Best-fit sigma for skull = {sigma_fit}")
 print(f"Best-fit D for skull = {R_fit*2}")
 
-plt.figure(figsize=(8, 8))
-plt.scatter(skull_2['Correlation length']*1e6, skull_2['Visibility'], label = 'E = 45 keV real skull', color = 'blue')
-plt.plot(xdata, V_sphere(xdata, R_fit, sigma_fit), 'r-', label=f"Fit: D={np.abs(R_fit)*2:.4f}um, sigma={sigma_fit:.4f}")
-plt.xlabel(r'Correlation length in $\mu$m', fontsize=16)
-plt.ylabel('Visibility', fontsize=16)
-plt.title(f"Visibility vs Correlation length at {E_in_keV_skull:.1f} keV ", fontsize=16)
-
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-
-plt.legend(fontsize=12, loc='upper right')
-plt.grid(True)
-plt.tight_layout()
 
 #plt.savefig("skull_real_sim.pdf", dpi=300, bbox_inches='tight')
 
@@ -100,10 +89,13 @@ R_fit2, sigma_fit2 = popt2
 print(f"Best-fit sigma for skull from analyt = {sigma_fit2}")
 print(f"Best-fit D for skull from analyt = {R_fit2*2}")
 
+plt.figure(figsize=(8, 8))
+plt.plot(skull_3['Correlation length']*1e6, skull_3['Visibility'],marker='o', linestyle='-', label = r'simulated $1x10^{-6}$ m pixel size', color = 'blue')
+plt.plot(skull_4['Correlation length']*1e6, skull_4['Visibility'], marker='o', linestyle='-',label = r'simulated $1x10^{-7}$ m pixel size', color = 'red')
 plt.plot(corr_lengths*1e6,Visibility, label = 'analytical with 3 layers', color = 'green' )
 plt.xlabel(r'Correlation length in $\mu$m', fontsize=16)
 plt.ylabel('Visibility', fontsize=16)
-plt.title(f"Visibility vs Correlation length Analytical at {E_in_keV_skull:.1f} keV ", fontsize=16)
+plt.title(f"Visibility vs Correlation length at {E_in_keV:.1f} keV ", fontsize=16)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 
@@ -111,4 +103,5 @@ plt.legend(fontsize=12, loc='upper right')
 plt.grid(True)
 plt.tight_layout()
 
-plt.savefig("analytiiitsch.pdf", dpi=300, bbox_inches='tight')
+plt.savefig("analytiiitsch2.pdf", dpi=300, bbox_inches='tight')
+print(sim_pix_size_in_m*1e6)

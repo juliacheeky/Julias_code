@@ -33,20 +33,19 @@ class Sample_Skull:
         )
         t_samp_in_pix = self.positive.shape[1]
         self.thickness_in_mm = t_samp_in_pix * sim_pix_size_in_m * 1e3
-        print(f"Sample thickness in mm: {self.thickness_in_mm:.3f}")
         self.num_slc = int(t_samp_in_pix /t_slc_in_pix) 
 
         self.rho_bone_in_g_cm3 = rho_bone_in_g_cm3
         self.rho_air_in_g_cm3 = rho_air_in_g_cm3
 
-        self.mu_bone_in_1_m = xrl.CS_Total_CP(self.mat_bone, E_in_keV_skull) * self.rho_bone_in_g_cm3 * 100
-        self.delta_bone = 1 - xrl.Refractive_Index_Re(self.mat_bone,E_in_keV_skull,self.rho_bone_in_g_cm3)
+        self.mu_bone_in_1_m = xrl.CS_Total_CP(self.mat_bone, E_in_keV) * self.rho_bone_in_g_cm3 * 100
+        self.delta_bone = 1 - xrl.Refractive_Index_Re(self.mat_bone,E_in_keV,self.rho_bone_in_g_cm3)
         
-        self.mu_air_in_1_m = xrl.CS_Total_CP(self.mat_air, E_in_keV_skull) * self.rho_air_in_g_cm3 * 100
-        self.delta_air = 1 - xrl.Refractive_Index_Re(self.mat_air,E_in_keV_skull,self.rho_air_in_g_cm3)
+        self.mu_air_in_1_m = xrl.CS_Total_CP(self.mat_air, E_in_keV) * self.rho_air_in_g_cm3 * 100
+        self.delta_air = 1 - xrl.Refractive_Index_Re(self.mat_air,E_in_keV,self.rho_air_in_g_cm3)
 
-        print(f"Bone: Delta: {self.delta_bone:.3e}, Mu 1/m: {self.mu_bone_in_1_m:.3e} 1/m at {E_in_keV_skull} keV")
-        print(f"Air: Delta: {self.delta_air:.3e}, Mu 1/m: {self.mu_air_in_1_m:.3e} 1/m at {E_in_keV_skull} keV")
+        #print(f"Bone: Delta: {self.delta_bone:.3e}, Mu 1/m: {self.mu_bone_in_1_m:.3e} 1/m at {E_in_keV_skull} keV")
+        #print(f"Air: Delta: {self.delta_air:.3e}, Mu 1/m: {self.mu_air_in_1_m:.3e} 1/m at {E_in_keV_skull} keV")
     
     def create_slice2d(self)-> Tuple[np.ndarray, 
                                            np.ndarray]:
@@ -62,8 +61,6 @@ class Sample_Skull:
         slice_profiles_bkg = []
         bone, pores = self.create_slice2d()
         
-        print(f"Number of slices: {self.num_slc}") 
-        print(t_slc_in_pix) 
         for i in range(self.num_slc):
             start = i * t_slc_in_pix
             end = start + t_slc_in_pix

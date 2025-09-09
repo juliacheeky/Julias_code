@@ -19,7 +19,7 @@ mat_grat = "Si"
 # --- Geometry ----------------------------------------------------------------
 
 # Simulated pixel size in m
-sim_pix_size_in_m = 1e-6
+sim_pix_size_in_m = 1e-7
 # Image size in pix
 img_size_in_pix = 840 * int(px_in_um * 1e-6 / sim_pix_size_in_m) #decides the length in x direction of the setup 
 # Sample size in pix in X direction
@@ -34,24 +34,21 @@ prop_in_m = 0.175
 # --- Source ------------------------------------------------------------------
 
 # Energy in keV
-E_in_keV_skull = 45
-E_in_J = E_in_keV_skull * 1e3 * cte.e
+E_in_keV = 45
+E_in_J = E_in_keV * 1e3 * cte.e
 # Number of photons per pixel
 num_ph = 1e5
 # Wavelength in m 
 l_in_m = (cte.physical_constants["Planck constant in eV s"][0] * cte.c) / \
-         (E_in_keV_skull * 1e3)  
+         (E_in_keV * 1e3)  
 # Wavevector magnitude in 1/m 
-k_in_1_m = 2 * np.pi * (E_in_keV_skull * 1e3) / \
+k_in_1_m = 2 * np.pi * (E_in_keV * 1e3) / \
            (cte.physical_constants["Planck constant in eV s"][0] * cte.c)
 
 r_e = cte.physical_constants["classical electron radius"][0]  # in m
 # --- Sample ------------------------------------------------------------------
 
 sim_approx = "slice" #"slice"
-t_samp_in_mm = 1
-d_sph_in_um = 20
-f_sph = 0.01
 
 
 
@@ -77,14 +74,11 @@ name_mat_bkg = "Water"
 rho_bkg_in_g_cm3 = 0.998
 """
 
-
-# Thickness of a sample slice, in pix. 
-# Note: - For the projection approximation, t_slc = t_samp.
-#       - For the thin slice approximation, t_slc = 1.4 um (diameter of the 
-#         greatest simulated spheres).
-if (sim_approx == "proj"):
-    t_slc_in_pix = int(t_samp_in_mm * 1e-3 / sim_pix_size_in_m)
-elif(sim_approx == "slice"):
+if(sim_approx == "slice"):
     t_slc_in_pix = int(2 * 1e-6 / sim_pix_size_in_m)
 else:
     raise ValueError("Please provide a valid simulation approximation")
+
+
+detector_pixel_size = 1*1e-6
+binning_factor = int(detector_pixel_size/sim_pix_size_in_m)

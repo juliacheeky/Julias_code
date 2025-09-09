@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from grating import *
 from sample import *
+#from skull_sample import *
 from propagator import *
-import numpy as np
 from parameters import *
-from skull_parameter import *
+#from skull_parameter import *
 from detector import *
 import os
 import pandas as pd
@@ -28,12 +29,12 @@ def plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True):
     visibility_s = a_1s.real/a_0s
     visibility_r = a_1r.real/a_0r
     visibility = visibility_s/visibility_r
-    epsilon = -np.log(visibility) / (t_samp_in_mm * 1e-3)
+    #epsilon = -np.log(visibility) / (t_samp_in_mm * 1e-3)
     print(f"Visibility with sample: {visibility.real:.3f} at Energy: {E_in_keV:.1f} keV")
     print(f"Mean with sample: {np.mean(Isamp_stepped.real):.3f} at Energy: {E_in_keV:.1f} keV")
     plt.plot(Iref_stepped, label='Iref with G2', linewidth=0.5, color='red')
     plt.plot(Isamp_stepped, label='Isamp with G2', linewidth=0.5, color='blue')
-    plt.title(f"Intensity Profile at {E_in_keV:.1f} keV | Visibility with sample: {visibility.real:.3f} \n Thickness of sample: {t_samp_in_mm:.1f} mm | Mean Intensity: {np.mean(Isamp_stepped.real):.3f}")
+    #plt.title(f"Intensity Profile at {E_in_keV:.1f} keV | Visibility with sample: {visibility.real:.3f} \n Thickness of sample: {t_samp_in_mm:.1f} mm | Mean Intensity: {np.mean(Isamp_stepped.real):.3f}")
     #plt.title(f"Intensity Profile at {E_in_keV:.1f} keV no G2 \n Thickness of sample: {t_samp_in_mm:.1f} mm | Mean Intensity: {np.mean(Isamp_stepped.real):.3f}")
     plt.xlabel('Pixels')
     plt.xlim(1000, 1200)
@@ -49,8 +50,9 @@ def plot_intensity_withG2(det, prop,  wavefld_bg, save_plot=True):
     os.remove("clossser_look_test.pdf")
 
 
-def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat,thick_samp_mm=t_samp_in_mm):
+def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat,thick_samp_mm):
     Iref_large, Isamp_large = prop.obtain_Iref_Isamp(wavefld_bg, bin_grat)
+    
     G2 = det.create_g2()
     Iref_stepped, Isamp_stepped = det.phasestepping_conv(Isamp_large, Iref_large, G2)
 
@@ -66,7 +68,7 @@ def save_visibility_epsilon(det, prop,  wavefld_bg, bin_grat,thick_samp_mm=t_sam
     visibility_r = a_1r.real/a_0r
     visibility = visibility_s/visibility_r
     epsilon = -np.log(visibility) / (thick_samp_mm * 1e-3)
-    print(f"Mean with sample: {np.mean(Isamp_stepped.real):.3f} at Energy: {E_in_keV_skull:.1f} keV")
+    print(f"Mean with sample: {np.mean(Isamp_stepped.real):.3f} at Energy: {E_in_keV:.1f} keV")
     return visibility, epsilon
 
 def plot_epsilon_vs_d():

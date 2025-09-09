@@ -6,6 +6,7 @@ import skimage as ski
 import xraylib as xrl
 from tqdm import tqdm
 from parameters import *
+#from skull_parameter import *
 
 class Grating:                             
     
